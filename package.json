@@ -5,12 +5,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "npx serve dist -l $PORT"
+    "start": "node server.js"
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "serve": "^14.2.3"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
