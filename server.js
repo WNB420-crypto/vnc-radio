@@ -18,9 +18,15 @@ const ADMIN_USER        = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS        = process.env.ADMIN_PASS || 'vnc2024';
 
 // Supabase admin client (service role — bypasses RLS)
-const supabaseAdmin = (SUPABASE_URL && SUPABASE_SERVICE_KEY)
-  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+// Only connect when the URL is a real http(s) URL; a placeholder value used to crash the server on boot.
+const supabaseAdmin = (SUPABASE_URL && /^https?:\/\//i.test(SUPABASE_URL.trim()) && SUPABASE_SERVICE_KEY)
+  ? createClient(SUPABASE_URL.trim(), SUPABASE_SERVICE_KEY)
   : null;
+if (!supabaseAdmin) console.warn('Supabase not configured: set SUPABASE_URL (https://…supabase.co) and SUPABASE_SERVICE_KEY');
+
+const isAdmin = (b) => b && b.adminUser === ADMIN_USER && b.adminPass === ADMIN_PASS;
+const round2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
+const isDate = (s) => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
 
 const mime = {
   '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css',
@@ -231,6 +237,111 @@ http.createServer(async (req, res) => {
     } catch (err) {
       jsonRes(res, 500, { error: err.message });
     }
+    return;
+  }
+
+  // ── 7a. ADD TRACK (admin) ──────────────────────────────────────────────────
+  if (req.method === 'POST' && pathname === '/api/tracks') {
+    try {
+      const b = await readBodyJson(req);
+      if (!isAdmin(b)) { jsonRes(res, 401, { error: 'Unauthorized' }); return; }
+      if (!supabaseAdmin) { jsonRes(res, 500, { error: 'DB not configured' }); return; }
+      const title = String(b.title || '').trim();
+      const artist_name = String(b.artistName || '').trim();
+      if (!title || !artist_name) { jsonRes(res, 400, { error: 'Title and artist name are required' }); return; }
+      const isrc = String(b.isrc || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '') || null;
+      const { data, error } = await supabaseAdmin.from('tracks')
+        .insert({ title, artist_name, isrc, artist_id: b.artistId || null }).select().single();
+      if (error) throw error;
+      jsonRes(res, 200, { ok: true, track: data });
+    } catch (err) { jsonRes(res, 500, { error: err.message }); }
+    return;
+  }
+
+  // ── 7b. LIST TRACKS (admin) ────────────────────────────────────────────────
+  if (req.method === 'POST' && pathname === '/api/tracks/list') {
+    try {
+      const b = await readBodyJson(req);
+      if (!isAdmin(b)) { jsonRes(res, 401, { error: 'Unauthorized' }); return; }
+      if (!supabaseAdmin) { jsonRes(res, 500, { error: 'DB not configured' }); return; }
+      const { data, error } = await supabaseAdmin.from('tracks').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      jsonRes(res, 200, { tracks: data || [] });
+    } catch (err) { jsonRes(res, 500, { error: err.message }); }
+    return;
+  }
+
+  // ── 7c. LOG A SPIN (admin / playout system) ────────────────────────────────
+  if (req.method === 'POST' && pathname === '/api/spins') {
+    try {
+      const b = await readBodyJson(req);
+      if (!isAdmin(b)) { jsonRes(res, 401, { error: 'Unauthorized' }); return; }
+      if (!supabaseAdmin) { jsonRes(res, 500, { error: 'DB not configured' }); return; }
+      if (!b.trackId || !b.station) { jsonRes(res, 400, { error: 'trackId and station are required' }); return; }
+      const row = {
+        track_id: b.trackId,
+        station: String(b.station),
+        played_at: b.playedAt || new Date().toISOString(),
+        ad_revenue: round2(b.adRevenue),
+        stream_revenue: round2(b.streamRevenue),
+      };
+      const { error } = await supabaseAdmin.from('spins').insert(row);
+      if (error) throw error;
+      jsonRes(res, 200, { ok: true });
+    } catch (err) { jsonRes(res, 500, { error: err.message }); }
+    return;
+  }
+
+  // ── 7d. ROYALTY VAULT REPORT (admin) ───────────────────────────────────────
+  // Returns spins + artist earnings for one artist and period in the
+  // "royaltyvault.v1" format that the Royalty Vault app imports.
+  if (req.method === 'POST' && pathname === '/api/royalty-report') {
+    try {
+      const b = await readBodyJson(req);
+      if (!isAdmin(b)) { jsonRes(res, 401, { error: 'Unauthorized' }); return; }
+      if (!supabaseAdmin) { jsonRes(res, 500, { error: 'DB not configured' }); return; }
+      const artist = String(b.artistName || '').trim();
+      if (!artist || !isDate(b.from) || !isDate(b.to) || b.from > b.to) {
+        jsonRes(res, 400, { error: 'Send artistName and a from/to date range (YYYY-MM-DD)' }); return;
+      }
+      const { data: tracks, error: tErr } = await supabaseAdmin
+        .from('tracks').select('id,title,isrc,artist_name').ilike('artist_name', artist);
+      if (tErr) throw tErr;
+      const byId = new Map((tracks || []).map(t => [t.id, t]));
+      let spins = [];
+      if (byId.size) {
+        const { data, error } = await supabaseAdmin.from('spins')
+          .select('track_id,station,ad_revenue,stream_revenue')
+          .in('track_id', [...byId.keys()])
+          .gte('played_at', `${b.from}T00:00:00Z`).lte('played_at', `${b.to}T23:59:59Z`);
+        if (error) throw error;
+        spins = data || [];
+      }
+      const agg = new Map();
+      for (const s of spins) {
+        const a = agg.get(s.track_id) || { spins: 0, ad: 0, stream: 0, stations: new Set() };
+        a.spins++; a.ad += Number(s.ad_revenue) || 0; a.stream += Number(s.stream_revenue) || 0; a.stations.add(s.station);
+        agg.set(s.track_id, a);
+      }
+      const lines = [...agg.entries()].map(([id, a]) => {
+        const t = byId.get(id);
+        return {
+          title: t.title, isrc: t.isrc || '', stream: 'digitalradio',
+          units: a.spins, unit_label: 'spins',
+          amount: round2(a.ad + a.stream),
+          detail: { ad_revenue: round2(a.ad), stream_revenue: round2(a.stream), stations: [...a.stations] },
+        };
+      }).sort((x, y) => y.amount - x.amount);
+      jsonRes(res, 200, {
+        format: 'royaltyvault.v1',
+        source: 'VNC Radio',
+        report_id: `vncradio:${artist.toLowerCase()}:${b.from}:${b.to}`,
+        artist, period: { from: b.from, to: b.to },
+        generated_at: new Date().toISOString(),
+        totals: { units: lines.reduce((n, l) => n + l.units, 0), amount: round2(lines.reduce((n, l) => n + l.amount, 0)) },
+        lines,
+      });
+    } catch (err) { jsonRes(res, 500, { error: err.message }); }
     return;
   }
 

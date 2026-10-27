@@ -488,6 +488,102 @@ function Analytics() {
   );
 }
 
+// Tracks, spin logging and the Royalty Vault export (format "royaltyvault.v1").
+function RoyaltyVaultPanel({ notify, adminCreds }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const monthStart = today.slice(0, 8) + "01";
+  const [tracks, setTracks] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [track, setTrack] = useState({ artistName: "Vincithe1", title: "", isrc: "" });
+  const [spin, setSpin] = useState({ trackId: "", station: "", adRevenue: "", streamRevenue: "" });
+  const [rep, setRep] = useState({ artistName: "Vincithe1", from: monthStart, to: today });
+  const [last, setLast] = useState(null);
+
+  const call = async (path, body) => {
+    const res = await fetch(path, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, adminUser: adminCreds?.user, adminPass: adminCreds?.pass }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+    return data;
+  };
+  const loadTracks = async () => {
+    try { const d = await call("/api/tracks/list", {}); setTracks(d.tracks); } catch (e) { notify(e.message); }
+  };
+  useEffect(() => { loadTracks(); }, []);
+
+  const addTrack = async () => {
+    if (!track.title.trim()) { notify("Enter a track title"); return; }
+    setBusy(true);
+    try { await call("/api/tracks", track); notify("Track added"); setTrack({ ...track, title: "", isrc: "" }); loadTracks(); }
+    catch (e) { notify(e.message); } finally { setBusy(false); }
+  };
+  const logSpin = async () => {
+    if (!spin.trackId || !spin.station.trim()) { notify("Pick a track and enter the station"); return; }
+    setBusy(true);
+    try { await call("/api/spins", spin); notify("Spin logged"); setSpin({ ...spin, adRevenue: "", streamRevenue: "" }); }
+    catch (e) { notify(e.message); } finally { setBusy(false); }
+  };
+  const exportReport = async () => {
+    setBusy(true);
+    try {
+      const report = await call("/api/royalty-report", rep);
+      setLast(report);
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `vnc-radio-royalties-${rep.artistName.replace(/\W+/g, "-").toLowerCase()}-${rep.from}-to-${rep.to}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      notify(`Report ready: ${report.totals.units} spins, $${report.totals.amount.toFixed(2)}`);
+    } catch (e) { notify(e.message); } finally { setBusy(false); }
+  };
+
+  return (
+    <div className="card mb16">
+      <div className="section-title">ROYALTY VAULT EXPORT</div>
+      <div style={{ fontSize:12, color:T.chrome, marginBottom:12 }}>
+        Log tracks and spins, then download a report and import it in Royalty Vault (Ledger → Connections).
+      </div>
+      <div className="grid2">
+        <div>
+          <label>Add track</label>
+          <input placeholder="Artist" value={track.artistName} onChange={e => setTrack({ ...track, artistName: e.target.value })}/>
+          <input className="mt8" placeholder="Title" value={track.title} onChange={e => setTrack({ ...track, title: e.target.value })}/>
+          <input className="mt8" placeholder="ISRC (e.g. QZNMY2679713)" value={track.isrc} onChange={e => setTrack({ ...track, isrc: e.target.value })}/>
+          <button className="btn btn-ghost btn-sm mt8" disabled={busy} onClick={addTrack}>Add track</button>
+        </div>
+        <div>
+          <label>Log a spin</label>
+          <select value={spin.trackId} onChange={e => setSpin({ ...spin, trackId: e.target.value })}>
+            <option value="">Choose track…</option>
+            {tracks.map(t => <option key={t.id} value={t.id}>{t.artist_name} · {t.title}</option>)}
+          </select>
+          <input className="mt8" placeholder="Station (e.g. VNC Hot 97)" value={spin.station} onChange={e => setSpin({ ...spin, station: e.target.value })}/>
+          <div className="flex gap8 mt8">
+            <input type="number" step="0.01" placeholder="Ad rev $" value={spin.adRevenue} onChange={e => setSpin({ ...spin, adRevenue: e.target.value })}/>
+            <input type="number" step="0.01" placeholder="Stream rev $" value={spin.streamRevenue} onChange={e => setSpin({ ...spin, streamRevenue: e.target.value })}/>
+          </div>
+          <button className="btn btn-ghost btn-sm mt8" disabled={busy} onClick={logSpin}>Log spin</button>
+        </div>
+      </div>
+      <div className="mt16">
+        <label>Export royalty report</label>
+        <div className="flex gap8 wrap">
+          <input style={{ flex:"1 1 140px" }} placeholder="Artist" value={rep.artistName} onChange={e => setRep({ ...rep, artistName: e.target.value })}/>
+          <input style={{ flex:"1 1 130px" }} type="date" value={rep.from} onChange={e => setRep({ ...rep, from: e.target.value })}/>
+          <input style={{ flex:"1 1 130px" }} type="date" value={rep.to} onChange={e => setRep({ ...rep, to: e.target.value })}/>
+          <button className="btn btn-red" disabled={busy} onClick={exportReport}>Download for Royalty Vault</button>
+        </div>
+        {last && <div className="mono mt8" style={{ fontSize:12, color:T.chrome }}>
+          Last export: {last.lines.length} tracks · {last.totals.units} spins · ${last.totals.amount.toFixed(2)}
+        </div>}
+      </div>
+    </div>
+  );
+}
+
 function ArtistPortal({ notify, users, adminCreds, onRefreshUsers }) {
   const [showAdd, setShowAdd] = useState(false);
   const combinedArtists = [
@@ -579,6 +675,7 @@ function ArtistPortal({ notify, users, adminCreds, onRefreshUsers }) {
           ))}
         </div>
       )}
+      <RoyaltyVaultPanel notify={notify} adminCreds={adminCreds} />
       <div className="card">
         <div className="section-title">SOUNDOVAULT INTEGRATION</div>
         <div style={{ background:T.slateLight, borderRadius:8, padding:16, border:`1px solid ${T.brain}33` }}>
