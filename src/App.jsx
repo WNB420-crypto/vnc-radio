@@ -205,9 +205,20 @@ function AIHelper() {
     if (!input.trim() || loading) return;
     const userMsg = input.trim();
     setInput("");
-    setMessages(prev => [...prev, { role:"user", text:userMsg }]);
+    const updatedMessages = [...messages, { role:"user", text:userMsg }];
+    setMessages(updatedMessages);
     setLoading(true);
-    setMessages(prev => [...prev, { role:"assistant", text:"The assistant is not connected in this design preview. Connect your server-side AI service to enable responses." }]);
+    try {
+      const res = await fetch("/api/ai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: updatedMessages }),
+      });
+      const data = await res.json();
+      setMessages(prev => [...prev, { role:"assistant", text: data.reply || "Sorry, I couldn't get a response right now." }]);
+    } catch {
+      setMessages(prev => [...prev, { role:"assistant", text:"Connection error. Please try again." }]);
+    }
     setLoading(false);
   }, [input, loading, messages]);
 
@@ -477,15 +488,34 @@ function Analytics() {
   );
 }
 
-function ArtistPortal({ notify, users }) {
+function ArtistPortal({ notify, users, adminCreds, onRefreshUsers }) {
   const [showAdd, setShowAdd] = useState(false);
   const combinedArtists = [
     { name:"Pharaoh Beats", genre:"Hip-Hop", tracks:24, spins:18420, adRev:4820, streamRev:2340, svSync:true },
     { name:"Aaliyah Rose", genre:"R&B", tracks:18, spins:31050, adRev:8920, streamRev:5100, svSync:true },
     { name:"Blaze 2X", genre:"Trap", tracks:31, spins:22100, adRev:5640, streamRev:3200, svSync:false },
     { name:"Pastor Keys", genre:"Gospel", tracks:12, spins:7890, adRev:1200, streamRev:980, svSync:true },
-    ...users.artists.map(u => ({ name:u.artistName, genre:u.genre, tracks:0, spins:0, adRev:0, streamRev:0, svSync:false }))
+    ...users.artists.map(u => ({ name:u.artist_name||u.name, genre:u.genre, tracks:0, spins:0, adRev:0, streamRev:0, svSync:false }))
   ];
+
+  const handleArtistAction = async (artistId, action) => {
+    try {
+      const res = await fetch("/api/approve-artist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ artistId, action, adminUser: adminCreds?.user, adminPass: adminCreds?.pass }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        notify(action === "approve" ? "Artist approved ✅" : "Artist rejected ❌");
+        onRefreshUsers?.();
+      } else {
+        notify("Error: " + (data.error || "Unknown error"));
+      }
+    } catch {
+      notify("Could not reach server");
+    }
+  };
   return (
     <div className="fade-in">
       <div className="flex sb mb16">
@@ -532,6 +562,23 @@ function ArtistPortal({ notify, users }) {
           </div>
         ))}
       </div>
+      {users.artists.filter(a => !a.status || a.status === "pending").length > 0 && (
+        <div className="card mb16 fade-in">
+          <div className="section-title" style={{ color:T.acid }}>⏳ PENDING ARTIST APPLICATIONS</div>
+          {users.artists.filter(a => !a.status || a.status === "pending").map((a) => (
+            <div key={a.id} className="flex sb" style={{ padding:"12px 0", borderBottom:`1px solid ${T.slate}` }}>
+              <div>
+                <div style={{ fontWeight:700 }}>{a.artist_name || a.name}</div>
+                <div style={{ fontSize:11, color:T.chrome }}>{a.genre} · {a.label || "Independent"} · {a.email}</div>
+              </div>
+              <div className="flex gap8">
+                <button className="btn btn-red btn-sm" onClick={() => handleArtistAction(a.id, "approve")}>Approve</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleArtistAction(a.id, "reject")}>Reject</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="card">
         <div className="section-title">SOUNDOVAULT INTEGRATION</div>
         <div style={{ background:T.slateLight, borderRadius:8, padding:16, border:`1px solid ${T.brain}33` }}>
@@ -661,7 +708,7 @@ const ADMIN_TABS = [
   { id:"ai", label:"AI Assistant", icon:"🤖" },
 ];
 
-function AdminDashboard({ onLogout, notify, users }) {
+function AdminDashboard({ onLogout, notify, users, adminCreds, onRefreshUsers }) {
   const [tab, setTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const renderContent = () => {
@@ -669,7 +716,7 @@ function AdminDashboard({ onLogout, notify, users }) {
       case "overview": return <AdminOverview users={users}/>;
       case "stations": return <StationManager notify={notify}/>;
       case "analytics": return <Analytics/>;
-      case "artists": return <ArtistPortal notify={notify} users={users}/>;
+      case "artists": return <ArtistPortal notify={notify} users={users} adminCreds={adminCreds} onRefreshUsers={onRefreshUsers}/>;
       case "ads": return <AdManager notify={notify}/>;
       case "support": return <Support notify={notify}/>;
       case "ai": return <AIHelper/>;
@@ -738,7 +785,21 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
           <div className="flex gap8">
             {currentUser && <span style={{ fontSize:12, color:T.chrome }}>👤 {currentUser.name}</span>}
             {subscribed ? (
-              <span className="tag tag-sub">👑 PRO MEMBER</span>
+              <>
+                <span className="tag tag-sub">👑 PRO MEMBER</span>
+                <button className="btn btn-ghost btn-sm" onClick={async () => {
+                  try {
+                    const res = await fetch("/api/customer-portal", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ userId: currentUser?.id }),
+                    });
+                    const { url, error } = await res.json();
+                    if (error) { notify("Portal error: " + error); return; }
+                    window.location.href = url;
+                  } catch { notify("Could not open billing portal"); }
+                }}>Manage Subscription</button>
+              </>
             ) : (
               <button className="btn btn-amber" onClick={() => setShowSub(true)}>Go Pro — Ad Free</button>
             )}
@@ -861,9 +922,24 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
   const [form, setForm] = useState({ user:"", pass:"", name:"", email:"", artistName:"", genre:"", label:"", confirm:"" });
   const [err, setErr] = useState("");
 
-  const adminLogin = () => {
+  const adminLogin = async () => {
     const u = form.user.trim(), p = form.pass.trim();
-    setErr("This preview has no live admin authentication. Use Explore console demo on the homepage.");
+    if (!u || !p) { setErr("Enter username and password"); return; }
+    try {
+      const res = await fetch("/api/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: u, pass: p }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        onAdminLogin({ user: u, pass: p });
+      } else {
+        setErr(data.msg || "Invalid credentials");
+      }
+    } catch {
+      setErr("Could not reach server. Try again.");
+    }
   };
 
   const listenerLogin = () => {
@@ -1134,14 +1210,29 @@ export default function App() {
     }
   };
 
-  // Fetch all users for admin
-  const fetchUsers = async () => {
-    const { data: listeners } = await supabase.from("listeners").select("*");
-    const { data: artists } = await supabase.from("artists").select("*");
-    setUsers({ listeners: listeners || [], artists: artists || [] });
+  // Store admin creds in state for re-use in approve/reject calls
+  const [adminCreds, setAdminCreds] = useState(null);
+
+  // Fetch all users for admin — server-side, bypasses RLS
+  const fetchUsers = async (creds) => {
+    try {
+      const res = await fetch("/api/admin-users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminUser: creds.user, adminPass: creds.pass }),
+      });
+      const data = await res.json();
+      setUsers({ listeners: data.listeners || [], artists: data.artists || [] });
+    } catch {
+      // silently fail; dashboard still loads
+    }
   };
 
-  const onAdminLogin = () => { fetchUsers(); setView("admin"); };
+  const onAdminLogin = (creds) => {
+    setAdminCreds(creds);
+    fetchUsers(creds);
+    setView("admin");
+  };
 
   const onListenerLogin = async (email, pass) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
@@ -1253,7 +1344,7 @@ export default function App() {
           onRegisterArtist={onRegisterArtist}
         />
       )}
-      {view==="admin" && <AdminDashboard onLogout={onLogout} notify={notify} users={users}/>}
+      {view==="admin" && <AdminDashboard onLogout={onLogout} notify={notify} users={users} adminCreds={adminCreds} onRefreshUsers={() => fetchUsers(adminCreds)}/>}
       {view==="listener" && <ListenerFrontend onBack={onLogout} notify={notify} currentUser={currentUser} onSubscribe={onSubscribe}/>}
       {view==="artist-dash" && <ArtistDashboard user={currentUser} onLogout={onLogout} notify={notify}/>}
     </>
