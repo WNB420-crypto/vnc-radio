@@ -1186,9 +1186,42 @@ export default function App() {
   };
 
   const onSubscribe = async () => {
-    await supabase.from("listeners").update({ subscribed: true }).eq("id", currentUser.id);
-    setCurrentUser(prev => ({ ...prev, subscribed: true }));
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUser.id, email: currentUser.email }),
+      });
+      const { url, error } = await res.json();
+      if (error) { notify("Payment error: " + error); return; }
+      window.location.href = url; // redirect to Stripe Checkout
+    } catch (err) {
+      notify("Could not start checkout. Try again.");
+    }
   };
+
+  // Handle Stripe success redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "success") {
+      const sessionId = params.get("session_id");
+      const userId = params.get("user_id");
+      if (sessionId && userId) {
+        fetch(`/api/verify-checkout?session_id=${sessionId}`)
+          .then(r => r.json())
+          .then(async ({ paid }) => {
+            if (paid) {
+              await supabase.from("listeners").update({ subscribed: true }).eq("id", userId);
+              setCurrentUser(prev => prev ? { ...prev, subscribed: true } : prev);
+              notify("🎉 Welcome to VNC Radio Pro!");
+            }
+          })
+          .catch(() => {});
+        // Clean up URL
+        window.history.replaceState({}, "", "/");
+      }
+    }
+  }, []);
 
   const onLogout = async () => {
     await supabase.auth.signOut();
