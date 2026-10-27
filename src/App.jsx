@@ -1,34 +1,48 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
+// Brand Kit: Ink / Acid / Brain / Ivory
 const T = {
-  black: "#080A0F", slate: "#1A1F2E", slateLight: "#252B3D",
-  border: "#2E3550", red: "#E8001D", redDim: "#9B0013",
-  amber: "#F5A623", chrome: "#C8CDD6", white: "#F0F2F7",
-  green: "#00E676", blue: "#2979FF", purple: "#AA00FF",
+  black: "#111114",      // INK
+  slate: "#1A1A1E",      // card bg
+  slateLight: "#222226", // elevated card
+  border: "#2A2A30",     // subtle border
+  acid: "#C7FF3D",       // ACID green — primary accent
+  acidDim: "#8FB82A",    // dimmed acid
+  brain: "#F08AB8",      // BRAIN pink
+  ivory: "#F6F3E8",      // IVORY — primary text
+  chrome: "#9A9A9E",     // secondary text
+  white: "#F6F3E8",      // alias for ivory
+  // kept for semantic use in status tags
+  green: "#C7FF3D",      // map green → acid
+  red: "#C7FF3D",        // map red → acid (primary CTA)
+  amber: "#F08AB8",      // map amber → brain pink
+  blue: "#C7FF3D",       // map blue → acid
+  purple: "#F08AB8",     // map purple → brain pink
 };
 
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{background:${T.black};color:${T.white};font-family:'Inter',sans-serif;min-height:100vh}
-  ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:${T.slate}}::-webkit-scrollbar-thumb{background:${T.red};border-radius:3px}
-  .bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:2px}
+  body{background:${T.black};color:${T.ivory};font-family:'Inter',sans-serif;min-height:100vh}
+  ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:${T.slate}}::-webkit-scrollbar-thumb{background:${T.acid};border-radius:3px}
+  .barlow{font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .bebas{font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:2px;text-transform:uppercase}
   .mono{font-family:'JetBrains Mono',monospace}
   .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
-  .tag-live{background:${T.red};color:white}
-  .tag-on{background:${T.green}22;color:${T.green};border:1px solid ${T.green}44}
+  .tag-live{background:${T.acid};color:${T.black}}
+  .tag-on{background:${T.acid}22;color:${T.acid};border:1px solid ${T.acid}55}
   .tag-off{background:#ffffff11;color:${T.chrome};border:1px solid ${T.border}}
-  .tag-sub{background:${T.amber}22;color:${T.amber};border:1px solid ${T.amber}44}
-  .tag-fm{background:${T.blue}22;color:${T.blue};border:1px solid ${T.blue}44}
+  .tag-sub{background:${T.brain}22;color:${T.brain};border:1px solid ${T.brain}55}
+  .tag-fm{background:${T.acid}22;color:${T.acid};border:1px solid ${T.acid}44}
   .card{background:${T.slate};border:1px solid ${T.border};border-radius:10px;padding:16px}
-  .card-hover:hover{border-color:${T.red}66;transform:translateY(-1px);transition:all .2s}
-  .btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;letter-spacing:.5px}
-  .btn-red{background:${T.red};color:white}.btn-red:hover{background:#ff1a35}
-  .btn-ghost{background:transparent;color:${T.chrome};border:1px solid ${T.border}}.btn-ghost:hover{border-color:${T.chrome};color:white}
-  .btn-amber{background:${T.amber};color:${T.black}}.btn-amber:hover{background:#ffc04d}
-  .btn-sm{padding:5px 12px;font-size:11px}
-  input,select,textarea{background:${T.slateLight};border:1px solid ${T.border};color:${T.white};border-radius:6px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;width:100%;outline:none;transition:border .2s}
-  input:focus,select:focus,textarea:focus{border-color:${T.red}88}
+  .card-hover:hover{border-color:${T.acid}55;transform:translateY(-1px);transition:all .2s}
+  .btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-size:14px}
+  .btn-red{background:${T.acid};color:${T.black}}.btn-red:hover{background:#d9ff4d;box-shadow:0 0 20px ${T.acid}55}
+  .btn-ghost{background:transparent;color:${T.chrome};border:1px solid ${T.border}}.btn-ghost:hover{border-color:${T.acid};color:${T.acid}}
+  .btn-amber{background:${T.brain};color:${T.black}}.btn-amber:hover{background:#f5a0c8}
+  .btn-sm{padding:5px 12px;font-size:12px}
+  input,select,textarea{background:${T.slateLight};border:1px solid ${T.border};color:${T.ivory};border-radius:6px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;width:100%;outline:none;transition:border .2s}
+  input:focus,select:focus,textarea:focus{border-color:${T.acid}88;box-shadow:0 0 0 2px ${T.acid}15}
   label{font-size:12px;color:${T.chrome};display:block;margin-bottom:4px;font-weight:500}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
@@ -37,45 +51,47 @@ const css = `
   .sb{justify-content:space-between}.wrap{flex-wrap:wrap}
   .mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
   .mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
-  .stat-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;line-height:1}
+  .stat-num{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;line-height:1;letter-spacing:1px}
   .stat-label{font-size:11px;color:${T.chrome};margin-top:4px;text-transform:uppercase;letter-spacing:1px}
-  .section-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:${T.chrome};margin-bottom:12px}
-  .waveform-bar{display:inline-block;background:${T.red};border-radius:2px;animation:wave var(--d,.6s) ease-in-out infinite alternate;transform-origin:bottom}
+  .section-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;letter-spacing:3px;color:${T.acid};margin-bottom:12px;text-transform:uppercase}
+  .waveform-bar{display:inline-block;background:${T.acid};border-radius:2px;animation:wave var(--d,.6s) ease-in-out infinite alternate;transform-origin:bottom}
   @keyframes wave{from{height:var(--min,4px)}to{height:var(--max,20px)}}
-  .pulse{animation:pulse 2s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .pulse{animation:pulse 2s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
   .fade-in{animation:fadeIn .3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  .sidebar-item{padding:10px 14px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;transition:all .15s;color:${T.chrome};margin-bottom:2px}
-  .sidebar-item:hover{background:${T.slateLight};color:white}
-  .sidebar-item.active{background:${T.red}22;color:${T.red};border-left:2px solid ${T.red}}
+  .sidebar-item{padding:10px 14px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all .15s;color:${T.chrome};margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;font-size:15px}
+  .sidebar-item:hover{background:${T.slateLight};color:${T.ivory}}
+  .sidebar-item.active{background:${T.acid}18;color:${T.acid};border-left:3px solid ${T.acid}}
   .progress-bar{height:4px;background:${T.border};border-radius:2px;overflow:hidden}
   .progress-fill{height:100%;border-radius:2px;transition:width .5s}
   table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:${T.chrome};border-bottom:1px solid ${T.border};font-weight:600}
-  td{padding:10px 12px;border-bottom:1px solid ${T.border}11;vertical-align:middle}
+  th{text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:${T.acid};border-bottom:1px solid ${T.border};font-weight:700}
+  td{padding:10px 12px;border-bottom:1px solid ${T.border}22;vertical-align:middle}
   tr:hover td{background:${T.slateLight}88}
   .switch{position:relative;display:inline-block;width:40px;height:22px}
   .switch input{opacity:0;width:0;height:0}
   .slider{position:absolute;cursor:pointer;inset:0;background:${T.border};border-radius:22px;transition:.3s}
   .slider:before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s}
-  input:checked + .slider{background:${T.red}}
+  input:checked + .slider{background:${T.acid}}
   input:checked + .slider:before{transform:translateX(18px)}
   .ai-msg{padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.5;margin-bottom:8px}
-  .ai-msg.assistant{background:${T.slateLight};border-left:3px solid ${T.red}}
-  .ai-msg.user{background:${T.red}22;border-left:3px solid ${T.amber}}
+  .ai-msg.assistant{background:${T.slateLight};border-left:3px solid ${T.acid}}
+  .ai-msg.user{background:${T.acid}14;border-left:3px solid ${T.brain}}
   .station-card{background:${T.slate};border:1px solid ${T.border};border-radius:12px;padding:20px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
-  .station-card:hover{border-color:${T.red};transform:translateY(-2px)}
-  .station-card.favorited{border-color:${T.amber}}
+  .station-card:hover{border-color:${T.acid};transform:translateY(-2px);box-shadow:0 4px 24px ${T.acid}18}
+  .station-card.favorited{border-color:${T.brain}}
   .station-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
-  .station-card.red::before{background:${T.red}}.station-card.amber::before{background:${T.amber}}
-  .station-card.blue::before{background:${T.blue}}.station-card.green::before{background:${T.green}}
-  .station-card.purple::before{background:${T.purple}}
-  .modal-overlay{position:fixed;inset:0;background:#000000cc;display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+  .station-card.red::before{background:${T.acid}}.station-card.amber::before{background:${T.brain}}
+  .station-card.blue::before{background:${T.acid}}.station-card.green::before{background:${T.acid}}
+  .station-card.purple::before{background:${T.brain}}
+  .modal-overlay{position:fixed;inset:0;background:#000000dd;display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
   .modal-box{background:${T.slate};border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;border:1px solid ${T.border}}
-  .notification{position:fixed;top:20px;right:20px;z-index:999;background:${T.slate};border:1px solid ${T.green};border-radius:8px;padding:12px 18px;font-size:13px;font-weight:500;color:${T.green};animation:slideIn .3s ease}
+  .notification{position:fixed;top:20px;right:20px;z-index:999;background:${T.black};border:1px solid ${T.acid};border-radius:8px;padding:12px 18px;font-size:13px;font-weight:600;color:${T.acid};animation:slideIn .3s ease;font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:.5px;text-transform:uppercase}
   @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-  .sub-banner{background:linear-gradient(135deg,${T.amber}22,${T.amber}11);border:1px solid ${T.amber}44;border-radius:10px;padding:14px 18px;margin-bottom:16px}
-  .error-msg{color:${T.red};font-size:12px;margin-top:6px}
-  .success-msg{color:${T.green};font-size:12px;margin-top:6px}
+  .sub-banner{background:linear-gradient(135deg,${T.brain}18,${T.brain}0a);border:1px solid ${T.brain}44;border-radius:10px;padding:14px 18px;margin-bottom:16px}
+  .error-msg{color:#ff6b6b;font-size:12px;margin-top:6px}
+  .success-msg{color:${T.acid};font-size:12px;margin-top:6px}
+  .acid-glow{box-shadow:0 0 30px ${T.acid}30}
+  .brain-glow{box-shadow:0 0 20px ${T.brain}30}
   @media(max-width:768px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
 `;
 
@@ -206,7 +222,7 @@ function AIHelper() {
   return (
     <div style={{ display:"flex", flexDirection:"column", height:"calc(100vh - 120px)" }}>
       <div className="flex gap8 mb16">
-        <div style={{ width:36, height:36, borderRadius:"50%", background:`${T.red}22`, border:`1px solid ${T.red}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>🤖</div>
+        <div style={{ width:36, height:36, borderRadius:"50%", background:`${T.acid}18`, border:`1px solid ${T.acid}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>🤖</div>
         <div>
           <div style={{ fontWeight:600 }}>VNC AI Growth Assistant</div>
           <div style={{ fontSize:11, color:T.green }} className="flex gap4"><span className="pulse" style={{ width:6, height:6, borderRadius:"50%", background:T.green, display:"inline-block" }}/> Online</div>
@@ -251,10 +267,10 @@ function AdminOverview({ users }) {
         </div>
       </div>
       <div className="grid4 mb16">
-        <StatCard label="Active Listeners" value={totalListeners.toLocaleString()} sub="+12% today" color={T.red} icon="📻"/>
-        <StatCard label="Stations Live" value={STATIONS.filter(s=>s.live).length} color={T.green} icon="🎙️"/>
-        <StatCard label="Monthly Revenue" value="$48,120" sub="+8.3% MoM" color={T.amber} icon="💰"/>
-        <StatCard label="Pro Subscribers" value={subCount || "3,847"} sub="+234 this week" color={T.blue} icon="👑"/>
+        <StatCard label="Active Listeners" value={totalListeners.toLocaleString()} sub="+12% today" color={T.acid} icon="📻"/>
+        <StatCard label="Stations Live" value={STATIONS.filter(s=>s.live).length} color={T.acid} icon="🎙️"/>
+        <StatCard label="Monthly Revenue" value="$48,120" sub="+8.3% MoM" color={T.brain} icon="💰"/>
+        <StatCard label="Pro Subscribers" value={subCount || "3,847"} sub="+234 this week" color={T.brain} icon="👑"/>
       </div>
       <div className="grid2 mb16">
         <div className="card">
@@ -283,7 +299,7 @@ function AdminOverview({ users }) {
                 <div style={{ fontSize:12 }}>{l.city}</div>
                 <div className="mono" style={{ fontSize:12, color:T.chrome }}>{l.count.toLocaleString()}</div>
               </div>
-              <ProgressBar val={l.count} max={1300} color={l.sub?T.amber:T.blue}/>
+              <ProgressBar val={l.count} max={1300} color={l.sub?T.brain:T.blue}/>
             </div>
           ))}
         </div>
@@ -330,7 +346,7 @@ function AdminOverview({ users }) {
                 <td>{a.station}</td>
                 <td className="mono">{a.plays.toLocaleString()}</td>
                 <td className="mono" style={{ color:T.green }}>${a.revenue.toLocaleString()}</td>
-                <td className="mono" style={{ color:T.amber }}>{a.ctr}</td>
+                <td className="mono" style={{ color:T.brain }}>{a.ctr}</td>
                 <td><span className={`tag ${a.status==="active"?"tag-on":"tag-off"}`}>{a.status}</span></td>
               </tr>
             ))}
@@ -408,8 +424,8 @@ function Analytics() {
     <div className="fade-in">
       <div className="bebas mb16" style={{ fontSize:22 }}>ANALYTICS & INSIGHTS</div>
       <div className="grid4 mb16">
-        <StatCard label="Total Spins Today" value="142,840" sub="+6% vs yesterday" color={T.red}/>
-        <StatCard label="Ad Revenue MTD" value="$48,120" sub="+8.3%" color={T.amber}/>
+        <StatCard label="Total Spins Today" value="142,840" sub="+6% vs yesterday" color={T.acid}/>
+        <StatCard label="Ad Revenue MTD" value="$48,120" sub="+8.3%" color={T.brain}/>
         <StatCard label="Avg Session" value="47 min" color={T.blue}/>
         <StatCard label="Churn Rate" value="2.1%" color={T.green}/>
       </div>
@@ -422,7 +438,7 @@ function Analytics() {
                 <div style={{ fontSize:13, fontWeight:600 }}>{s.name}</div>
                 <div className="mono" style={{ fontSize:12 }}>{s.listeners.toLocaleString()}</div>
               </div>
-              <ProgressBar val={s.listeners} max={4000} color={s.color==="red"?T.red:s.color==="amber"?T.amber:s.color==="blue"?T.blue:s.color==="green"?T.green:T.purple}/>
+              <ProgressBar val={s.listeners} max={4000} color={s.color==="red"?T.acid:s.color==="amber"?T.brain:s.color==="blue"?T.blue:s.color==="green"?T.green:T.purple}/>
             </div>
           ))}
         </div>
@@ -455,7 +471,7 @@ function Analytics() {
               <div className="grid2" style={{ gap:6, fontSize:11, color:T.chrome }}>
                 <div>Signal: <span style={{ color:T.green }}>98.4%</span></div>
                 <div>Bitrate: <span style={{ color:T.white }}>{s.fm?"320":"192"}kbps</span></div>
-                <div>Latency: <span style={{ color:T.amber }}>{s.fm?"42":"18"}ms</span></div>
+                <div>Latency: <span style={{ color:T.brain }}>{s.fm?"42":"18"}ms</span></div>
                 <div>Uptime: <span style={{ color:T.white }}>99.7%</span></div>
               </div>
               <div className="mt8"><Waveform bars={16} height={20} active={s.live}/></div>
@@ -516,7 +532,7 @@ function ArtistPortal({ notify, users }) {
             </div>
             <div className="grid3" style={{ gap:8 }}>
               <div><div className="stat-label">Tracks</div><div className="mono">{a.tracks}</div></div>
-              <div><div className="stat-label">Spins</div><div className="mono" style={{ color:T.amber }}>{a.spins.toLocaleString()}</div></div>
+              <div><div className="stat-label">Spins</div><div className="mono" style={{ color:T.brain }}>{a.spins.toLocaleString()}</div></div>
               <div><div className="stat-label">Revenue</div><div className="mono" style={{ color:T.green }}>${(a.adRev+a.streamRev).toLocaleString()}</div></div>
             </div>
           </div>
@@ -524,7 +540,7 @@ function ArtistPortal({ notify, users }) {
       </div>
       <div className="card">
         <div className="section-title">SOUNDOVAULT INTEGRATION</div>
-        <div style={{ background:T.slateLight, borderRadius:8, padding:16, border:`1px solid ${T.amber}33` }}>
+        <div style={{ background:T.slateLight, borderRadius:8, padding:16, border:`1px solid ${T.brain}33` }}>
           <div className="flex gap12 mb12">
             <div style={{ fontSize:32 }}>🔗</div>
             <div>
@@ -552,9 +568,9 @@ function AdManager({ notify }) {
       </div>
       <div className="grid4 mb16">
         <StatCard label="Active Campaigns" value="12" color={T.green}/>
-        <StatCard label="MTD Revenue" value="$48,120" sub="+8%" color={T.amber}/>
+        <StatCard label="MTD Revenue" value="$48,120" sub="+8%" color={T.brain}/>
         <StatCard label="Avg CTR" value="8.9%" color={T.blue}/>
-        <StatCard label="Brands Partnered" value="24" color={T.red}/>
+        <StatCard label="Brands Partnered" value="24" color={T.acid}/>
       </div>
       <div className="card mb16">
         <div className="section-title">ACTIVE CAMPAIGNS</div>
@@ -568,7 +584,7 @@ function AdManager({ notify }) {
                 <td style={{ fontSize:12 }}>{a.station}</td>
                 <td className="mono">{a.plays.toLocaleString()}</td>
                 <td className="mono" style={{ color:T.green }}>${a.revenue.toLocaleString()}</td>
-                <td className="mono" style={{ color:T.amber }}>{a.ctr}</td>
+                <td className="mono" style={{ color:T.brain }}>{a.ctr}</td>
                 <td><span className={`tag ${a.status==="active"?"tag-on":"tag-off"}`}>{a.status}</span></td>
                 <td>
                   <div className="flex gap4">
@@ -604,8 +620,8 @@ function Support({ notify }) {
     <div className="fade-in">
       <div className="bebas mb16" style={{ fontSize:22 }}>CUSTOMER SUPPORT</div>
       <div className="grid4 mb16">
-        <StatCard label="Open Tickets" value={SUPPORT_TICKETS.filter(t=>t.status==="open").length} color={T.red}/>
-        <StatCard label="High Priority" value={SUPPORT_TICKETS.filter(t=>t.priority==="high").length} color={T.amber}/>
+        <StatCard label="Open Tickets" value={SUPPORT_TICKETS.filter(t=>t.status==="open").length} color={T.acid}/>
+        <StatCard label="High Priority" value={SUPPORT_TICKETS.filter(t=>t.priority==="high").length} color={T.brain}/>
         <StatCard label="Resolved Today" value="18" color={T.green}/>
         <StatCard label="Avg Response" value="1.4h" color={T.blue}/>
       </div>
@@ -672,11 +688,11 @@ function AdminDashboard({ onLogout, notify, users }) {
         <div style={{ padding:"16px 14px", borderBottom:`1px solid ${T.border}` }}>
           {sidebarOpen ? (
             <div>
-              <div className="bebas" style={{ fontSize:22, color:T.red, letterSpacing:3 }}>VNC RADIO</div>
-              <div style={{ fontSize:10, color:T.chrome, letterSpacing:1 }}>ADMIN CONSOLE</div>
+              <div className="barlow" style={{ fontSize:24, color:T.acid, letterSpacing:2, lineHeight:1 }}>VNC RADIO</div>
+              <div style={{ fontSize:9, color:T.chrome, letterSpacing:2, marginTop:2 }}>ADMIN CONSOLE</div>
             </div>
           ) : (
-            <div className="bebas" style={{ fontSize:18, color:T.red }}>VNC</div>
+            <div className="barlow" style={{ fontSize:18, color:T.acid }}>VNC</div>
           )}
         </div>
         <div style={{ flex:1, padding:"10px 8px", overflowY:"auto" }}>
@@ -722,8 +738,8 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
       <div style={{ background:T.slate, borderBottom:`1px solid ${T.border}`, padding:"14px 20px" }}>
         <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div>
-            <div className="bebas" style={{ fontSize:28, color:T.red, letterSpacing:3 }}>VNC RADIO</div>
-            <div style={{ fontSize:10, color:T.chrome, letterSpacing:2 }}>POWERED BY VNC</div>
+            <div className="barlow" style={{ fontSize:30, color:T.acid, letterSpacing:2, lineHeight:1 }}>VNC RADIO</div>
+            <div style={{ fontSize:9, color:T.chrome, letterSpacing:3, marginTop:2 }}>SOUND THAT STAYS ON YOUR MIND.</div>
           </div>
           <div className="flex gap8">
             {currentUser && <span style={{ fontSize:12, color:T.chrome }}>👤 {currentUser.name}</span>}
@@ -738,8 +754,8 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
       </div>
 
       {!subscribed && (
-        <div style={{ background:`${T.amber}11`, borderBottom:`1px solid ${T.amber}33`, padding:"10px 20px", textAlign:"center" }}>
-          <span style={{ fontSize:12, color:T.amber }}>
+        <div style={{ background:`${T.brain}11`, borderBottom:`1px solid ${T.brain}33`, padding:"10px 20px", textAlign:"center" }}>
+          <span style={{ fontSize:12, color:T.brain }}>
             👑 <strong>VNC Pro</strong> — Ad-free listening + exclusive content + giveaways for just $9.99/mo
             <button className="btn btn-amber btn-sm" style={{ marginLeft:12 }} onClick={() => setShowSub(true)}>Upgrade Now</button>
           </span>
@@ -747,7 +763,7 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
       )}
 
       {playing && (
-        <div style={{ background:`${T.red}22`, borderBottom:`1px solid ${T.red}33`, padding:"10px 20px" }}>
+        <div style={{ background:`${T.acid}18`, borderBottom:`1px solid ${T.acid}33`, padding:"10px 20px" }}>
           <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", alignItems:"center", gap:16 }}>
             <span className="tag tag-live pulse">● LIVE</span>
             <div style={{ fontWeight:700 }}>{STATIONS.find(s=>s.id===playing)?.name}</div>
@@ -805,7 +821,7 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
         <div className="modal-overlay">
           <div className="modal-box">
             <div className="flex sb mb16">
-              <div className="bebas" style={{ fontSize:26, color:T.amber }}>GO PRO</div>
+              <div className="bebas" style={{ fontSize:26, color:T.acid }}>GO PRO</div>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowSub(false)}>✕</button>
             </div>
             <div className="grid2" style={{ gap:16, marginBottom:20 }}>
@@ -819,9 +835,9 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
                 </ul>
                 <button className="btn btn-ghost mt12" style={{ width:"100%" }} onClick={() => setShowSub(false)}>Continue Free</button>
               </div>
-              <div style={{ background:`linear-gradient(135deg,${T.slateLight},${T.slate})`, borderRadius:12, padding:20, border:`1px solid ${T.amber}44` }}>
+              <div style={{ background:`linear-gradient(135deg,${T.slateLight},${T.slate})`, borderRadius:12, padding:20, border:`1px solid ${T.brain}44` }}>
                 <div className="tag tag-sub mb8">PRO</div>
-                <div className="bebas" style={{ fontSize:28, color:T.amber }}>$9.99<span style={{ fontSize:14 }}>/mo</span></div>
+                <div className="bebas" style={{ fontSize:28, color:T.brain }}>$9.99<span style={{ fontSize:14 }}>/mo</span></div>
                 <ul style={{ marginTop:12, paddingLeft:16, fontSize:12, lineHeight:2 }}>
                   <li>✓ Zero advertisements</li>
                   <li>✓ Curated playlists & drops</li>
@@ -883,31 +899,57 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
   const F = (k,v) => { setErr(""); setForm(p=>({...p,[k]:v})); };
 
   if (mode==="home") return (
-    <div style={{ minHeight:"100vh", background:T.black, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:20 }}>
-      <div style={{ textAlign:"center", marginBottom:40 }}>
-        <div className="bebas" style={{ fontSize:64, color:T.red, letterSpacing:6, lineHeight:1 }}>VNC</div>
-        <div className="bebas" style={{ fontSize:32, color:T.white, letterSpacing:4 }}>RADIO</div>
-        <div style={{ fontSize:11, color:T.chrome, letterSpacing:3, marginTop:6 }}>BROADCAST MANAGEMENT PLATFORM</div>
+    <div style={{ minHeight:"100vh", background:T.black, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:20, position:"relative", overflow:"hidden" }}>
+      {/* Background graphic motif — wavy lines */}
+      <div style={{ position:"absolute", inset:0, pointerEvents:"none", overflow:"hidden" }}>
+        <div style={{ position:"absolute", bottom:-40, left:-60, width:500, height:200, background:`radial-gradient(ellipse,${T.acid}12 0%,transparent 70%)`, filter:"blur(40px)" }}/>
+        <div style={{ position:"absolute", top:-40, right:-60, width:400, height:200, background:`radial-gradient(ellipse,${T.brain}14 0%,transparent 70%)`, filter:"blur(40px)" }}/>
       </div>
-      <div style={{ width:"100%", maxWidth:400, display:"flex", flexDirection:"column", gap:12 }}>
-        <button className="btn btn-red" style={{ width:"100%", padding:"14px", fontSize:15 }} onClick={() => setMode("listener-login")}>
-          📻 Listen to VNC Radio
+
+      {/* Brain + Radio Logo SVG mark */}
+      <div style={{ marginBottom:8, fontSize:72, lineHeight:1, textAlign:"center", filter:`drop-shadow(0 0 24px ${T.acid}40)` }}>🧠</div>
+
+      <div style={{ textAlign:"center", marginBottom:10 }}>
+        <div className="barlow" style={{ fontSize:72, color:T.ivory, letterSpacing:4, lineHeight:.9 }}>VNC RADIO</div>
+        <div style={{ fontSize:13, color:T.acid, letterSpacing:4, marginTop:10, fontWeight:700, textTransform:"uppercase" }}>
+          MUSIC / CULTURE / ALWAYS ON
+        </div>
+      </div>
+
+      {/* Tagline */}
+      <div style={{ textAlign:"center", marginBottom:40, maxWidth:380 }}>
+        <div className="barlow" style={{ fontSize:26, color:T.chrome, letterSpacing:2, lineHeight:1.2 }}>
+          SOUND THAT STAYS ON YOUR MIND.
+        </div>
+      </div>
+
+      <div style={{ width:"100%", maxWidth:380, display:"flex", flexDirection:"column", gap:12 }}>
+        <button className="btn btn-red" style={{ width:"100%", padding:"16px", fontSize:18 }} onClick={() => setMode("listener-login")}>
+          📻 LISTEN NOW
         </button>
-        <button className="btn btn-ghost" style={{ width:"100%", padding:"14px", fontSize:15 }} onClick={() => setMode("artist-login")}>
-          🎤 Artist Portal
+        <button className="btn btn-ghost" style={{ width:"100%", padding:"16px", fontSize:18 }} onClick={() => setMode("artist-login")}>
+          🎤 ARTIST PORTAL
         </button>
         <div style={{ textAlign:"center", margin:"8px 0" }}>
           <span style={{ fontSize:12, color:T.chrome }}>New here? </span>
-          <button style={{ background:"none", border:"none", color:T.amber, fontSize:12, cursor:"pointer", textDecoration:"underline" }} onClick={() => setMode("listener-reg")}>
-            Create listener account
+          <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer", textDecoration:"underline" }} onClick={() => setMode("listener-reg")}>
+            Create free account
           </button>
           <span style={{ fontSize:12, color:T.chrome }}> or </span>
-          <button style={{ background:"none", border:"none", color:T.amber, fontSize:12, cursor:"pointer", textDecoration:"underline" }} onClick={() => setMode("artist-reg")}>
+          <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer", textDecoration:"underline" }} onClick={() => setMode("artist-reg")}>
             apply as an artist
           </button>
         </div>
+
+        {/* Sub brands / nav links */}
+        <div className="flex gap8 wrap" style={{ justifyContent:"center", marginTop:8 }}>
+          {["MUSIC","CULTURE","ARTISTS","STATIONS"].map(l => (
+            <span key={l} style={{ fontSize:10, color:T.chrome, letterSpacing:2, opacity:.6 }}>{l}</span>
+          ))}
+        </div>
+
         <div style={{ borderTop:`1px solid ${T.border}`, paddingTop:16, textAlign:"center" }}>
-          <button className="btn btn-ghost btn-sm" style={{ opacity:.4, fontSize:11 }} onClick={() => setMode("admin")}>Admin Access</button>
+          <button className="btn btn-ghost btn-sm" style={{ opacity:.3, fontSize:10, letterSpacing:2 }} onClick={() => setMode("admin")}>ADMIN ACCESS</button>
         </div>
       </div>
     </div>
@@ -919,8 +961,9 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
     <div style={{ minHeight:"100vh", background:T.black, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
       <div style={{ width:"100%", maxWidth:380 }}>
         <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div className="bebas" style={{ fontSize:48, color:T.red, letterSpacing:4 }}>VNC RADIO</div>
-          <div style={{ fontSize:11, color:T.chrome, letterSpacing:2 }}>ADMIN CONSOLE</div>
+          <div style={{ fontSize:42, marginBottom:4 }}>🧠</div>
+          <div className="barlow" style={{ fontSize:48, color:T.acid, letterSpacing:4, lineHeight:.9 }}>VNC RADIO</div>
+          <div style={{ fontSize:10, color:T.chrome, letterSpacing:3, marginTop:6 }}>ADMIN CONSOLE</div>
         </div>
         <div className="card mb12">
           <div className="section-title">ADMIN ACCESS</div>
@@ -938,7 +981,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
     <div style={{ minHeight:"100vh", background:T.black, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
       <div style={{ width:"100%", maxWidth:380 }}>
         <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div className="bebas" style={{ fontSize:48, color:T.red, letterSpacing:4 }}>VNC RADIO</div>
+          <div className="barlow" style={{ fontSize:52, color:T.acid, letterSpacing:4 }}>VNC RADIO</div>
           <div style={{ fontSize:11, color:T.chrome, letterSpacing:2 }}>LISTENER LOGIN</div>
         </div>
         <div className="card mb12">
@@ -948,7 +991,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
           <button className="btn btn-red" style={{ width:"100%" }} onClick={listenerLogin}>Sign In</button>
           <div style={{ textAlign:"center", marginTop:12, fontSize:12, color:T.chrome }}>
             Don't have an account?{" "}
-            <button style={{ background:"none", border:"none", color:T.amber, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("listener-reg"); setErr(""); }}>Sign up free</button>
+            <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("listener-reg"); setErr(""); }}>Sign up free</button>
           </div>
         </div>
         <button className="btn btn-ghost" style={{ width:"100%" }} onClick={back}>← Back</button>
@@ -960,7 +1003,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
     <div style={{ minHeight:"100vh", background:T.black, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
       <div style={{ width:"100%", maxWidth:380 }}>
         <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div className="bebas" style={{ fontSize:48, color:T.red, letterSpacing:4 }}>VNC RADIO</div>
+          <div className="barlow" style={{ fontSize:52, color:T.acid, letterSpacing:4 }}>VNC RADIO</div>
           <div style={{ fontSize:11, color:T.chrome, letterSpacing:2 }}>CREATE ACCOUNT</div>
         </div>
         <div className="card mb12">
@@ -972,7 +1015,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
           <button className="btn btn-red" style={{ width:"100%" }} onClick={regListener}>Create Free Account</button>
           <div style={{ textAlign:"center", marginTop:12, fontSize:12, color:T.chrome }}>
             Already have an account?{" "}
-            <button style={{ background:"none", border:"none", color:T.amber, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("listener-login"); setErr(""); }}>Sign in</button>
+            <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("listener-login"); setErr(""); }}>Sign in</button>
           </div>
         </div>
         <button className="btn btn-ghost" style={{ width:"100%" }} onClick={back}>← Back</button>
@@ -984,7 +1027,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
     <div style={{ minHeight:"100vh", background:T.black, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
       <div style={{ width:"100%", maxWidth:380 }}>
         <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div className="bebas" style={{ fontSize:48, color:T.red, letterSpacing:4 }}>VNC RADIO</div>
+          <div className="barlow" style={{ fontSize:52, color:T.acid, letterSpacing:4 }}>VNC RADIO</div>
           <div style={{ fontSize:11, color:T.chrome, letterSpacing:2 }}>ARTIST LOGIN</div>
         </div>
         <div className="card mb12">
@@ -994,7 +1037,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
           <button className="btn btn-red" style={{ width:"100%" }} onClick={artistLogin}>Sign In</button>
           <div style={{ textAlign:"center", marginTop:12, fontSize:12, color:T.chrome }}>
             Want to work with VNC?{" "}
-            <button style={{ background:"none", border:"none", color:T.amber, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("artist-reg"); setErr(""); }}>Apply now</button>
+            <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("artist-reg"); setErr(""); }}>Apply now</button>
           </div>
         </div>
         <button className="btn btn-ghost" style={{ width:"100%" }} onClick={back}>← Back</button>
@@ -1006,11 +1049,11 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
     <div style={{ minHeight:"100vh", background:T.black, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
       <div style={{ width:"100%", maxWidth:400 }}>
         <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div className="bebas" style={{ fontSize:48, color:T.red, letterSpacing:4 }}>VNC RADIO</div>
+          <div className="barlow" style={{ fontSize:52, color:T.acid, letterSpacing:4 }}>VNC RADIO</div>
           <div style={{ fontSize:11, color:T.chrome, letterSpacing:2 }}>ARTIST APPLICATION</div>
         </div>
         <div className="card mb12">
-          <div style={{ background:`${T.amber}11`, border:`1px solid ${T.amber}33`, borderRadius:8, padding:12, marginBottom:16, fontSize:12, color:T.amber }}>
+          <div style={{ background:`${T.brain}11`, border:`1px solid ${T.brain}33`, borderRadius:8, padding:12, marginBottom:16, fontSize:12, color:T.brain }}>
             🎤 Join VNC Radio — get your music on our stations, track your spins & revenue, and sync with SoundoVault.
           </div>
           <div className="mb12"><label>Artist / Stage Name</label><input value={form.artistName} onChange={e=>F("artistName",e.target.value)} placeholder="Your stage name"/></div>
@@ -1029,7 +1072,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
           <button className="btn btn-red" style={{ width:"100%" }} onClick={regArtist}>Submit Application</button>
           <div style={{ textAlign:"center", marginTop:12, fontSize:12, color:T.chrome }}>
             Already have an account?{" "}
-            <button style={{ background:"none", border:"none", color:T.amber, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("artist-login"); setErr(""); }}>Sign in</button>
+            <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer" }} onClick={() => { setMode("artist-login"); setErr(""); }}>Sign in</button>
           </div>
         </div>
         <button className="btn btn-ghost" style={{ width:"100%" }} onClick={back}>← Back</button>
@@ -1049,7 +1092,7 @@ function ArtistDashboard({ user, onLogout, notify }) {
     <div style={{ minHeight:"100vh", background:T.black }}>
       <div style={{ background:T.slate, borderBottom:`1px solid ${T.border}`, padding:"14px 20px" }}>
         <div style={{ maxWidth:1000, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div className="bebas" style={{ fontSize:24, color:T.red, letterSpacing:3 }}>VNC RADIO — ARTIST PORTAL</div>
+          <div className="bebas" style={{ fontSize:24, color:T.acid, letterSpacing:3 }}>VNC RADIO — ARTIST PORTAL</div>
           <div className="flex gap8">
             <span style={{ fontSize:12, color:T.chrome }}>🎤 {user.artistName}</span>
             <button className="btn btn-ghost btn-sm" onClick={onLogout}>Logout</button>
@@ -1057,8 +1100,8 @@ function ArtistDashboard({ user, onLogout, notify }) {
         </div>
       </div>
       <div style={{ maxWidth:1000, margin:"0 auto", padding:"24px 20px" }}>
-        <div style={{ background:`${T.amber}11`, border:`1px solid ${T.amber}33`, borderRadius:10, padding:20, marginBottom:24 }}>
-          <div className="bebas" style={{ fontSize:22, color:T.amber, marginBottom:8 }}>WELCOME, {user.artistName.toUpperCase()}!</div>
+        <div style={{ background:`${T.brain}11`, border:`1px solid ${T.brain}33`, borderRadius:10, padding:20, marginBottom:24 }}>
+          <div className="bebas" style={{ fontSize:22, color:T.acid, marginBottom:8 }}>WELCOME, {user.artistName.toUpperCase()}!</div>
           <div style={{ fontSize:13, color:T.chrome, lineHeight:1.7 }}>
             Your application is under review by the VNC Radio team. Once approved, your music will be eligible for rotation on our stations.
             You'll be able to upload tracks, track your spins, and monitor your revenue here.
@@ -1069,8 +1112,8 @@ function ArtistDashboard({ user, onLogout, notify }) {
           </div>
         </div>
         <div className="grid4 mb16">
-          <StatCard label="Tracks Uploaded" value={mockData.tracks} color={T.red} icon="🎵"/>
-          <StatCard label="Total Spins" value={mockData.spins} color={T.amber} icon="🔄"/>
+          <StatCard label="Tracks Uploaded" value={mockData.tracks} color={T.acid} icon="🎵"/>
+          <StatCard label="Total Spins" value={mockData.spins} color={T.brain} icon="🔄"/>
           <StatCard label="Ad Revenue" value="$0" color={T.green} icon="💰"/>
           <StatCard label="Stream Revenue" value="$0" color={T.blue} icon="📊"/>
         </div>
