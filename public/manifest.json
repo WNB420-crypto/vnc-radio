@@ -1,0 +1,17 @@
+{
+  "name": "VNC Radio",
+  "short_name": "VNC Radio",
+  "description": "Sound that stays on your mind.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111114",
+  "theme_color": "#111114",
+  "icons": [
+    {
+      "src": "/vnc-radio-logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
