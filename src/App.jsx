@@ -95,6 +95,12 @@ const css = `
   .acid-glow{box-shadow:0 0 30px ${T.acid}30}
   .brain-glow{box-shadow:0 0 20px ${T.brain}30}
   @media(max-width:768px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+:root{color-scheme:dark}html{scroll-behavior:smooth}body{overflow-x:hidden}button,a,input,select{touch-action:manipulation}button:focus-visible,a:focus-visible{outline:3px solid #F08AB8;outline-offset:4px}a{color:inherit;text-decoration:none}button{font-family:inherit}.demo-strip{padding:8px 24px;background:#23251b;color:#c7ff3d;font-size:10px;font-weight:800;letter-spacing:1.5px;text-align:center}.demo-strip span{font-weight:400;letter-spacing:.2px;color:#c8cbbd;margin-left:16px}.brand-home{max-width:1600px;margin:auto;background:#111114}.brand-nav{height:100px;margin:0 5%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #343438}.brand-word{display:flex;align-items:center;font-family:'Barlow Condensed',Impact,sans-serif;font-size:31px;font-weight:900;font-style:italic;letter-spacing:-.5px}.brand-word img{width:65px;height:65px;object-fit:contain;margin-right:12px}.brand-dot{font-size:16px;color:#c7ff3d;align-self:flex-start;margin-top:10px;margin-left:4px}.brand-nav nav{display:flex;gap:32px;align-items:center;font-size:13px;font-weight:600}.btn{border-radius:50px;padding:13px 24px;font-size:17px;letter-spacing:.3px;min-height:44px}.btn-sm{padding:9px 16px;font-size:14px}.btn-ghost{color:#f6f3e8;border-color:#505056}.brand-hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;min-height:660px;padding:65px 5% 70px;overflow:hidden;position:relative}.eyebrow{font-size:10px;letter-spacing:2px;font-weight:700;color:#c7ff3d;line-height:1.6}.hero-copy .eyebrow{display:flex;align-items:center;gap:10px}.eyebrow>span{width:6px;height:6px;background:#c7ff3d;border-radius:100%}h1{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(64px,7.8vw,116px);font-weight:900;line-height:.88;letter-spacing:-2px;margin:26px 0}em{font-style:italic;color:#f08ab8}h1 em{display:inline-block}p{line-height:1.7}.hero-copy>p{font-size:14px;max-width:390px;color:#b0b0b5;margin:25px 0}.hero-actions{display:flex;gap:12px}.hero-actions .btn{min-width:160px}.hero-actions .btn span{margin-left:30px}.hero-foot{font-size:10px;letter-spacing:2px;margin-top:40px;color:#aaaab0;display:flex;gap:18px}.hero-foot span{color:#f08ab8}.hero-art{position:relative;display:flex;align-items:center;justify-content:center;min-height:500px}.hero-art>img{width:100%;max-width:510px;position:relative;z-index:1;transform:rotate(-7deg);filter:drop-shadow(0 20px 30px #0008)}.signal-orbit{position:absolute;width:90%;aspect-ratio:1;border:2px solid #c7ff3d42;border-radius:100%;transform:rotate(-20deg) scaleY(.85)}.orbit-two{width:112%;border-color:#c7ff3d29}.orbit-three{width:132%;border-color:#c7ff3d19}.art-label{position:absolute;right:8px;top:0;font-size:9px;letter-spacing:3px;color:#a9a9ad}.art-sticker{position:absolute;bottom:0;right:0;z-index:2;background:#c7ff3d;color:#111114;font-family:'Barlow Condensed',Impact,sans-serif;font-size:26px;font-weight:900;line-height:.95;padding:20px 25px;border-radius:50%;transform:rotate(12deg)}.brand-ticker{background:#c7ff3d;color:#111114;padding:14px 0;white-space:nowrap;overflow:hidden;font-family:'Barlow Condensed',Impact,sans-serif;font-size:25px;font-weight:800;letter-spacing:1px;transform:rotate(-1deg);width:100%}.brand-ticker span{margin:0 25px}.brand-section{padding:75px 5%}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;gap:20px}h2{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(34px,3.5vw,54px);font-weight:900;line-height:1;letter-spacing:-.7px;margin-top:10px}h2>span{color:#f08ab8}.text-link{background:none;color:#f6f3e8;border:0;padding:10px 0;font-size:12px;cursor:pointer;border-bottom:1px solid #68686c}.frequency-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.frequency-card{text-align:left;background:#1b1b1e;color:#f6f3e8;padding:22px;border:1px solid #333338;border-radius:16px;overflow:hidden;cursor:pointer;transition:.2s}.frequency-card:hover{border-color:#c7ff3d;transform:translateY(-4px)}.frequency-top{display:flex;justify-content:space-between;font-size:10px;letter-spacing:1.5px;color:#b1b1b5}.frequency-top>span:last-child{color:#c7ff3d;font-size:22px}.frequency-art{height:155px;position:relative;overflow:hidden;margin:12px 0 22px}.frequency-number{font-family:'Barlow Condensed',Impact,sans-serif;font-size:150px;font-weight:900;line-height:1;color:#c7ff3d;position:relative;z-index:1;font-style:italic}.frequency-1 .frequency-number{color:#f08ab8}.frequency-2 .frequency-number{color:#f6f3e8}.record-groove{height:250px;width:250px;border-radius:50%;border:1px solid #c7ff3d44;position:absolute;left:38%;top:0;background:repeating-radial-gradient(circle,transparent 0 10px,#c7ff3d25 11px 12px)}.frequency-1 .record-groove{filter:hue-rotate(180deg)}.frequency-card h3{font-family:'Barlow Condensed',Impact,sans-serif;font-size:32px;font-weight:800;margin:4px 0}.frequency-card p{font-size:12px;color:#aaaab0}.artist-feature{margin:0 5% 80px;border:1px solid #3b3038;border-radius:24px;background:#1e1a1e;display:grid;grid-template-columns:.8fr 1fr;overflow:hidden}.artist-poster{max-height:660px;overflow:hidden}.artist-poster img{width:100%;height:100%;object-fit:cover}.artist-copy{padding:50px}.artist-copy h2{font-size:clamp(45px,5.3vw,80px);line-height:.94}.artist-copy>p{font-size:13px;color:#bab4bb;max-width:400px;margin:20px 0}.artist-steps{display:grid;gap:0;margin:24px 0}.artist-steps span{display:flex;gap:20px;color:#f08ab8;font-size:12px;padding:13px 0;border-bottom:1px solid #ffffff12}.artist-steps b{color:#f6f3e8;font-weight:500}.artist-copy>.text-link{margin-left:18px}.brand-footer{padding:25px 5% 35px;border-top:1px solid #333338;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand-footer p{font-size:10px;color:#99999f;letter-spacing:2px}.console-sidebar{position:sticky;top:0;height:100vh;background:#17171b!important}.sidebar-logo{width:150px;display:block;margin:0 auto}.sidebar-item{border:0;background:none;text-align:left;width:100%;min-height:48px;border-radius:10px;font-size:16px}.sidebar-item.active{border-left:0;background:#c7ff3d;color:#111114}.console-content{min-width:0}.console-banner{position:relative;display:flex;align-items:center;justify-content:space-between;padding:24px 32px;background:radial-gradient(ellipse at right,#f08ab81c,transparent 65%),#1e1e22;border:1px solid #3b3b40;border-radius:20px;margin-bottom:28px;overflow:hidden}.console-banner h2{font-size:44px;margin:8px 0}.console-banner p{color:#aaaab0;font-size:12px}.console-banner img{width:165px;transform:rotate(8deg);margin:-15px 0}.console-content .card{border-radius:16px;padding:22px;background:#1a1a1f}.console-content .stat-num{font-size:43px}.console-content .section-title{font-size:20px;letter-spacing:1.3px}.console-content .grid4{gap:16px}.tag{border-radius:30px;padding:5px 10px;font-size:9px;white-space:nowrap}input,select,textarea{min-height:44px;border-radius:10px}table{display:block;overflow-x:auto;white-space:normal}.grid2,.grid3,.grid4{min-width:0}.grid2>*{min-width:0}.station-card{border-radius:18px;padding:25px}.section-title{letter-spacing:1.5px}.modal-box{border-radius:22px}.notification{max-width:calc(100vw - 30px)}
+@media(min-width:1600px){h1{font-size:116px}}
+@media(max-width:1000px){.brand-hero{min-height:550px;padding-top:45px}.hero-art{min-height:380px}.hero-actions{flex-wrap:wrap}.console-sidebar{width:76px!important}.console-sidebar .sidebar-item{justify-content:center;padding:12px}.console-sidebar .sidebar-item span:nth-child(2){display:none}.sidebar-logo{width:48px}.console-sidebar>div:first-child{padding:14px 8px!important}.console-sidebar>div:first-child div[style]{font-size:0!important}.console-content .grid4{grid-template-columns:repeat(2,1fr)}.artist-copy{padding:30px}.brand-nav nav{gap:18px}}
+@media(max-width:650px){.demo-strip{font-size:9px;padding:8px 12px;line-height:1.6}.demo-strip span{display:block;margin-left:0;font-size:9px}.brand-nav{height:80px}.brand-word{font-size:25px}.brand-word img{width:48px;height:48px;margin-right:7px}.brand-nav nav>a{display:none}.brand-nav .btn{font-size:14px;padding:9px 18px}.brand-hero{grid-template-columns:1fr;padding:34px 6% 35px;gap:15px}.hero-copy .eyebrow{font-size:8px;letter-spacing:1.5px}h1{font-size:64px;margin:24px 0;letter-spacing:-1px}.hero-copy>p{font-size:13px;margin:18px 0}.hero-actions{flex-wrap:nowrap;gap:8px}.hero-actions .btn{min-width:0;padding:12px 18px;font-size:15px}.hero-actions .btn span{margin-left:10px}.hero-foot{margin-top:25px;font-size:9px;gap:14px}.hero-art{min-height:350px;margin-top:20px}.hero-art>img{max-width:320px;width:87%}.art-label{top:0}.art-sticker{font-size:21px;padding:15px 20px;right:6px}.brand-ticker{font-size:20px}.brand-section{padding:45px 6%}.section-heading{display:block}.section-heading .text-link{margin-top:10px}h2{font-size:36px}.frequency-grid{grid-template-columns:1fr;gap:14px}.frequency-art{height:110px}.frequency-number{font-size:115px}.frequency-card{padding:20px}.frequency-card h3{font-size:30px}.artist-feature{grid-template-columns:1fr;margin:0 6% 40px}.artist-poster{max-height:350px}.artist-poster img{object-position:center 39%}.artist-copy{padding:28px}.artist-copy h2{font-size:62px}.artist-copy>.text-link{margin-left:10px}.brand-footer{flex-wrap:wrap;padding:25px 6%}.brand-footer p{width:100%;order:3;font-size:8px}.console-shell{display:block!important}.console-sidebar{position:relative;width:100%!important;height:auto;display:block!important;border-right:0!important}.console-sidebar>div:first-child{display:none}.console-sidebar>div:nth-child(2){display:flex;gap:4px;overflow-x:auto;padding:10px!important}.console-sidebar .sidebar-item{min-width:52px;width:52px;flex-shrink:0}.console-sidebar>div:last-child{display:flex;justify-content:flex-end;padding:2px 10px!important}.console-sidebar>div:last-child .sidebar-item:last-child{display:none}.console-sidebar>div:last-child .sidebar-item{width:auto;min-height:32px;font-size:11px}.console-content>div{padding:16px!important}.console-banner{padding:22px 18px;margin-bottom:20px}.console-banner h2{font-size:31px}.console-banner .eyebrow{font-size:8px}.console-banner p{font-size:10px}.console-banner img{width:90px;margin:0 -8px 0 5px}.console-content .card{padding:16px}.console-content .stat-num{font-size:32px}.console-content .stat-label{font-size:9px}.console-content .grid4{gap:10px}.console-content .grid2{grid-template-columns:1fr}.console-content .section-title{font-size:18px}.console-content .grid4 .card .flex>div:last-child:not(:first-child){display:none}.flex.sb{gap:12px;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
 `;
 
 // ============================================================
@@ -200,23 +206,8 @@ function AIHelper() {
     setInput("");
     setMessages(prev => [...prev, { role:"user", text:userMsg }]);
     setLoading(true);
-    try {
-      const history = messages.map(m => ({ role:m.role==="assistant"?"assistant":"user", content:m.text }));
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({
-          model:"claude-sonnet-4-6", max_tokens:1000,
-          system:`You are the AI growth & marketing assistant for VNC Radio — a professional broadcast platform. Help with: social media posts, brand partnership pitches, ad scripts, station promos, listener growth strategies. Urban radio culture voice. Keep it sharp and industry-authentic.`,
-          messages:[...history, { role:"user", content:userMsg }],
-        }),
-      });
-      const data = await res.json();
-      const reply = data.content?.find(b => b.type==="text")?.text || "Let me think on that...";
-      setMessages(prev => [...prev, { role:"assistant", text:reply }]);
-    } catch {
-      setMessages(prev => [...prev, { role:"assistant", text:"Connection issue — try again in a moment." }]);
-    } finally { setLoading(false); }
+    setMessages(prev => [...prev, { role:"assistant", text:"The assistant is not connected in this design preview. Connect your server-side AI service to enable responses." }]);
+    setLoading(false);
   }, [input, loading, messages]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior:"smooth" }); }, [messages]);
@@ -261,7 +252,7 @@ function AdminOverview({ users }) {
       <div className="flex sb mb16 wrap gap8">
         <div>
           <div className="bebas" style={{ fontSize:26 }}>BROADCAST COMMAND CENTER</div>
-          <div style={{ fontSize:12, color:T.chrome }}>VNC Radio Network — Live Dashboard</div>
+          <div style={{ fontSize:12, color:T.chrome }}>VNC Radio Network — Sample dashboard</div>
         </div>
         <div className="flex gap8">
           <span className="tag tag-live pulse">● LIVE</span>
@@ -685,24 +676,24 @@ function AdminDashboard({ onLogout, notify, users }) {
     }
   };
   return (
-    <div style={{ display:"flex", minHeight:"100vh" }}>
-      <div style={{ width:sidebarOpen?220:60, background:T.slate, borderRight:`1px solid ${T.border}`, transition:"width .2s", flexShrink:0, display:"flex", flexDirection:"column" }}>
+    <div className="console-shell" style={{ display:"flex", minHeight:"100vh" }}>
+      <div className="console-sidebar" style={{ width:sidebarOpen?220:76, background:T.slate, borderRight:`1px solid ${T.border}`, transition:"width .2s", flexShrink:0, display:"flex", flexDirection:"column" }}>
         <div style={{ padding:"16px 14px", borderBottom:`1px solid ${T.border}` }}>
           {sidebarOpen ? (
             <div>
-              <div className="barlow" style={{ fontSize:24, color:T.acid, letterSpacing:2, lineHeight:1 }}>VNC RADIO</div>
+              <img className="sidebar-logo" src={LOGO} alt="VNC Radio"/>
               <div style={{ fontSize:9, color:T.chrome, letterSpacing:2, marginTop:2 }}>ADMIN CONSOLE</div>
             </div>
           ) : (
-            <div className="barlow" style={{ fontSize:18, color:T.acid }}>VNC</div>
+            <img src={LOGO} alt="VNC Radio" style={{width:46}}/>
           )}
         </div>
         <div style={{ flex:1, padding:"10px 8px", overflowY:"auto" }}>
           {ADMIN_TABS.map(t => (
-            <div key={t.id} className={`sidebar-item ${tab===t.id?"active":""}`} onClick={() => { setTab(t.id); setSidebarOpen(false); }}>
+            <button title={t.label} key={t.id} className={`sidebar-item ${tab===t.id?"active":""}`} onClick={() => { setTab(t.id); }}>
               <span style={{ fontSize:16 }}>{t.icon}</span>
               {sidebarOpen && <span>{t.label}</span>}
-            </div>
+            </button>
           ))}
         </div>
         <div style={{ padding:"10px 8px", borderTop:`1px solid ${T.border}` }}>
@@ -710,9 +701,9 @@ function AdminDashboard({ onLogout, notify, users }) {
           <div className="sidebar-item" onClick={() => setSidebarOpen(!sidebarOpen)}><span>{sidebarOpen?"◀":"▶"}</span>{sidebarOpen && <span>Collapse</span>}</div>
         </div>
       </div>
-      <div style={{ flex:1, overflow:"auto" }}>
+      <div className="console-content" style={{ flex:1, overflow:"auto" }}>
         <div style={{ padding:"20px 24px", maxWidth:1400, margin:"0 auto" }}>
-          {renderContent()}
+          <div className="console-banner"><div><span className="eyebrow">VNC RADIO / CONTROL ROOM</span><h2>BEHIND THE <em>SOUND.</em></h2><p>Your stations. Your artists. One frequency.</p></div><img src={LOGO} alt="VNC Radio"/></div>{renderContent()}
         </div>
       </div>
     </div>
@@ -740,7 +731,7 @@ function ListenerFrontend({ onBack, notify, currentUser, onSubscribe }) {
       <div style={{ background:T.slate, borderBottom:`1px solid ${T.border}`, padding:"14px 20px" }}>
         <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div>
-            <div className="barlow" style={{ fontSize:30, color:T.acid, letterSpacing:2, lineHeight:1 }}>VNC RADIO</div>
+            <img src={LOGO} alt="VNC Radio" style={{width:90, height:90,objectFit:"contain"}}/>
             <div style={{ fontSize:9, color:T.chrome, letterSpacing:3, marginTop:2 }}>SOUND THAT STAYS ON YOUR MIND.</div>
           </div>
           <div className="flex gap8">
@@ -871,8 +862,7 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
 
   const adminLogin = () => {
     const u = form.user.trim(), p = form.pass.trim();
-    if ((u==="admin"&&p==="vnc2024")||(u==="radio"&&p==="vncradio")) { setErr(""); onAdminLogin(); }
-    else setErr("Invalid admin credentials");
+    setErr("This preview has no live admin authentication. Use Explore console demo on the homepage.");
   };
 
   const listenerLogin = () => {
@@ -901,58 +891,17 @@ function AuthScreen({ onAdminLogin, onListenerLogin, onArtistLogin, onRegisterLi
   const F = (k,v) => { setErr(""); setForm(p=>({...p,[k]:v})); };
 
   if (mode==="home") return (
-    <div style={{ minHeight:"100vh", background:T.black, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:20, position:"relative", overflow:"hidden" }}>
-      {/* Background graphic motif — wavy lines */}
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none", overflow:"hidden" }}>
-        <div style={{ position:"absolute", bottom:-40, left:-60, width:500, height:200, background:`radial-gradient(ellipse,${T.acid}12 0%,transparent 70%)`, filter:"blur(40px)" }}/>
-        <div style={{ position:"absolute", top:-40, right:-60, width:400, height:200, background:`radial-gradient(ellipse,${T.brain}14 0%,transparent 70%)`, filter:"blur(40px)" }}/>
-      </div>
-
-      {/* Brain + Radio Logo SVG mark */}
-      <img src={LOGO} alt="VNC Radio" style={{ width:220, height:220, objectFit:"contain", marginBottom:0, filter:`drop-shadow(0 0 32px ${T.acid}50)` }} />
-
-      <div style={{ textAlign:"center", marginBottom:10 }}>
-        <div style={{ fontSize:13, color:T.acid, letterSpacing:4, marginTop:4, fontWeight:700, textTransform:"uppercase" }}>
-          MUSIC / CULTURE / ALWAYS ON
-        </div>
-      </div>
-
-      {/* Tagline */}
-      <div style={{ textAlign:"center", marginBottom:40, maxWidth:380 }}>
-        <div className="barlow" style={{ fontSize:26, color:T.chrome, letterSpacing:2, lineHeight:1.2 }}>
-          SOUND THAT STAYS ON YOUR MIND.
-        </div>
-      </div>
-
-      <div style={{ width:"100%", maxWidth:380, display:"flex", flexDirection:"column", gap:12 }}>
-        <button className="btn btn-red" style={{ width:"100%", padding:"16px", fontSize:18 }} onClick={() => setMode("listener-login")}>
-          📻 LISTEN NOW
-        </button>
-        <button className="btn btn-ghost" style={{ width:"100%", padding:"16px", fontSize:18 }} onClick={() => setMode("artist-login")}>
-          🎤 ARTIST PORTAL
-        </button>
-        <div style={{ textAlign:"center", margin:"8px 0" }}>
-          <span style={{ fontSize:12, color:T.chrome }}>New here? </span>
-          <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer", textDecoration:"underline" }} onClick={() => setMode("listener-reg")}>
-            Create free account
-          </button>
-          <span style={{ fontSize:12, color:T.chrome }}> or </span>
-          <button style={{ background:"none", border:"none", color:T.brain, fontSize:12, cursor:"pointer", textDecoration:"underline" }} onClick={() => setMode("artist-reg")}>
-            apply as an artist
-          </button>
-        </div>
-
-        {/* Sub brands / nav links */}
-        <div className="flex gap8 wrap" style={{ justifyContent:"center", marginTop:8 }}>
-          {["MUSIC","CULTURE","ARTISTS","STATIONS"].map(l => (
-            <span key={l} style={{ fontSize:10, color:T.chrome, letterSpacing:2, opacity:.6 }}>{l}</span>
-          ))}
-        </div>
-
-        <div style={{ borderTop:`1px solid ${T.border}`, paddingTop:16, textAlign:"center" }}>
-          <button className="btn btn-ghost btn-sm" style={{ opacity:.3, fontSize:10, letterSpacing:2 }} onClick={() => setMode("admin")}>ADMIN ACCESS</button>
-        </div>
-      </div>
+    <div className="brand-home">
+      <header className="brand-nav"><a href="#" className="brand-word"><img src={LOGO} alt=""/>VNC RADIO<span className="brand-dot">®</span></a><nav><a href="#stations">The stations</a><a href="#artists">For artists</a><button className="btn btn-ghost" onClick={()=>setMode("listener-login")}>Sign in ↗</button></nav></header>
+      <main>
+        <section className="brand-hero">
+          <div className="hero-copy"><div className="eyebrow"><span/> INDEPENDENT SOUND. UNLIMITED MINDSET.</div><h1>SOUND THAT<br/>STAYS ON<br/>YOUR <em>MIND.</em></h1><p>Your next favorite sound is out there. Find your frequency. Bring your music. Make some noise.</p><div className="hero-actions"><button className="btn btn-red" onClick={()=>onListenerLogin(null,null)}>Explore stations <span>↗</span></button><button className="btn btn-ghost" onClick={()=>setMode("artist-reg")}>I’m an artist ↗</button></div><div className="hero-foot">MUSIC <span>✦</span> CULTURE <span>✦</span> CONNECTION</div></div>
+          <div className="hero-art"><div className="signal-orbit orbit-one"/><div className="signal-orbit orbit-two"/><div className="signal-orbit orbit-three"/><span className="art-label">TRANSMISSION / 001</span><img src={LOGO} alt="VNC Radio pink parasite brain gripping a radio"/><span className="art-sticker">GET INSIDE<br/>THE SOUND.</span></div>
+        </section>
+        <div className="brand-ticker" aria-hidden="true">TURN IT UP. <span>✦</span> STAY ON THE FREQUENCY. <span>✦</span> VNC RADIO. <span>✦</span> TURN IT UP. <span>✦</span> STAY ON THE FREQUENCY.</div>
+        <section className="brand-section" id="stations"><div className="section-heading"><div><div className="eyebrow">THE NETWORK / STATION PREVIEW</div><h2>FIND YOUR FREQUENCY<span>.</span></h2></div><button className="text-link" onClick={()=>onListenerLogin(null,null)}>Explore all stations ↗</button></div><div className="frequency-grid">{STATIONS.slice(0,3).map((s,i)=><button className={'frequency-card frequency-'+i} key={s.id} onClick={()=>onListenerLogin(null,null)}><div className="frequency-top"><span>CHANNEL / 0{s.id}</span><span>↗</span></div><div className="frequency-art"><span className="frequency-number">0{s.id}</span><div className="record-groove"/></div><div className="eyebrow">{s.genre}</div><h3>{s.name}</h3><p>{s.desc}</p></button>)}</div></section>
+        <section className="artist-feature" id="artists"><div className="artist-poster"><img src="/assets/campaign.png" alt="VNC Radio campaign: sound that stays on your mind"/></div><div className="artist-copy"><div className="eyebrow">FOR THE ONES MAKING THE SOUND</div><h2>YOUR MUSIC.<br/>YOUR NEXT<br/><em>MOVE.</em></h2><p>Bring your strongest track and your own point of view. Explore the VNC artist portal and take the next step in your release strategy.</p><div className="artist-steps"><span>01 <b>Create your artist profile</b></span><span>02 <b>Explore your music dashboard</b></span><span>03 <b>Get ready for your next release</b></span></div><button className="btn btn-red" onClick={()=>setMode("artist-reg")}>Join as an artist ↗</button><button className="text-link" onClick={()=>setMode("artist-login")}>Artist sign in</button></div></section>
+      </main><footer className="brand-footer"><div className="brand-word">VNC RADIO<span className="brand-dot">®</span></div><p>SOUND THAT STAYS ON YOUR MIND.</p><a className="text-link" href="/vnc-radio-source.zip" download>Download redesign source ↓</a><button className="text-link" onClick={onAdminLogin}>Explore console demo ↗</button></footer>
     </div>
   );
 
@@ -1104,12 +1053,12 @@ function ArtistDashboard({ user, onLogout, notify }) {
         <div style={{ background:`${T.brain}11`, border:`1px solid ${T.brain}33`, borderRadius:10, padding:20, marginBottom:24 }}>
           <div className="bebas" style={{ fontSize:22, color:T.acid, marginBottom:8 }}>WELCOME, {user.artistName.toUpperCase()}!</div>
           <div style={{ fontSize:13, color:T.chrome, lineHeight:1.7 }}>
-            Your application is under review by the VNC Radio team. Once approved, your music will be eligible for rotation on our stations.
+            Your sample artist profile is ready for this session. This preview does not submit an application to the VNC Radio team.
             You'll be able to upload tracks, track your spins, and monitor your revenue here.
           </div>
           <div className="flex gap8 mt12">
             <span className="tag tag-sub">Genre: {user.genre}</span>
-            <span className="tag tag-off">Status: Pending Review</span>
+            <span className="tag tag-off">Status: Demo Profile</span>
           </div>
         </div>
         <div className="grid4 mb16">
@@ -1137,6 +1086,7 @@ function ArtistDashboard({ user, onLogout, notify }) {
 // ============================================================
 export default function App() {
   const [view, setView] = useState("auth"); // auth | admin | listener | artist-dash
+  useEffect(() => { window.scrollTo(0,0); }, [view]);
   const [notif, setNotif] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState({ listeners:[], artists:[] });
@@ -1146,6 +1096,7 @@ export default function App() {
   const onAdminLogin = () => setView("admin");
 
   const onListenerLogin = (email, pass) => {
+    if (email === null) { setCurrentUser(null); setView("listener"); return {ok:true}; }
     const u = users.listeners.find(u => u.email===email && u.pass===pass);
     if (!u) return { ok:false, msg:"No account found with those credentials" };
     setCurrentUser(u);
@@ -1172,7 +1123,7 @@ export default function App() {
     setUsers(prev => ({ ...prev, artists:[...prev.artists, data] }));
     setCurrentUser(data);
     setView("artist-dash");
-    notify("Application submitted! Welcome to VNC Radio 🎤");
+    notify("Demo artist profile created");
   };
 
   const onSubscribe = () => {
@@ -1183,7 +1134,7 @@ export default function App() {
 
   return (
     <>
-      <style>{css}</style>
+      <style>{css}</style><div className="demo-strip">DESIGN PREVIEW <span>Sample data · Accounts last for this session · Streaming and payments are not connected</span></div>
       {notif && <Notification msg={notif} onDone={() => setNotif(null)}/>}
       {view==="auth" && (
         <AuthScreen
