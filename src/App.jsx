@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "./supabase.js";
 const LOGO = "/vnc-radio-logo.png";
 
 
@@ -1082,59 +1083,133 @@ function ArtistDashboard({ user, onLogout, notify }) {
 }
 
 // ============================================================
-// ROOT APP
+// ROOT APP — Supabase auth + persistence
 // ============================================================
 export default function App() {
-  const [view, setView] = useState("auth"); // auth | admin | listener | artist-dash
-  useEffect(() => { window.scrollTo(0,0); }, [view]);
+  const [view, setView] = useState("loading"); // loading | auth | admin | listener | artist-dash
   const [notif, setNotif] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState({ listeners:[], artists:[] });
 
   const notify = msg => setNotif(msg);
 
-  const onAdminLogin = () => setView("admin");
+  // Restore session on mount
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        loadProfile(session.user);
+      } else {
+        setView("auth");
+      }
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { setCurrentUser(null); setView("auth"); }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const onListenerLogin = (email, pass) => {
-    if (email === null) { setCurrentUser(null); setView("listener"); return {ok:true}; }
-    const u = users.listeners.find(u => u.email===email && u.pass===pass);
-    if (!u) return { ok:false, msg:"No account found with those credentials" };
-    setCurrentUser(u);
+  const loadProfile = async (authUser) => {
+    // Check listeners table first
+    const { data: listener } = await supabase
+      .from("listeners")
+      .select("*")
+      .eq("id", authUser.id)
+      .single();
+    if (listener) {
+      setCurrentUser({ ...listener, email: authUser.email });
+      setView("listener");
+      return;
+    }
+    // Check artists table
+    const { data: artist } = await supabase
+      .from("artists")
+      .select("*")
+      .eq("id", authUser.id)
+      .single();
+    if (artist) {
+      setCurrentUser({ ...artist, email: authUser.email });
+      setView("artist-dash");
+    } else {
+      setView("auth");
+    }
+  };
+
+  // Fetch all users for admin
+  const fetchUsers = async () => {
+    const { data: listeners } = await supabase.from("listeners").select("*");
+    const { data: artists } = await supabase.from("artists").select("*");
+    setUsers({ listeners: listeners || [], artists: artists || [] });
+  };
+
+  const onAdminLogin = () => { fetchUsers(); setView("admin"); };
+
+  const onListenerLogin = async (email, pass) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) return { ok: false, msg: error.message };
+    const { data: profile } = await supabase.from("listeners").select("*").eq("id", data.user.id).single();
+    if (!profile) return { ok: false, msg: "No listener account found." };
+    setCurrentUser({ ...profile, email });
     setView("listener");
-    return { ok:true };
+    return { ok: true };
   };
 
-  const onArtistLogin = (email, pass) => {
-    const u = users.artists.find(u => u.email===email && u.pass===pass);
-    if (!u) return { ok:false, msg:"No artist account found with those credentials" };
-    setCurrentUser(u);
+  const onArtistLogin = async (email, pass) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) return { ok: false, msg: error.message };
+    const { data: profile } = await supabase.from("artists").select("*").eq("id", data.user.id).single();
+    if (!profile) return { ok: false, msg: "No artist account found." };
+    setCurrentUser({ ...profile, email });
     setView("artist-dash");
-    return { ok:true };
+    return { ok: true };
   };
 
-  const onRegisterListener = (data) => {
-    setUsers(prev => ({ ...prev, listeners:[...prev.listeners, data] }));
-    setCurrentUser(data);
+  const onRegisterListener = async (data) => {
+    const { data: authData, error } = await supabase.auth.signUp({ email: data.email, password: data.pass });
+    if (error) return { ok: false, msg: error.message };
+    const profile = { id: authData.user.id, name: data.name, subscribed: false };
+    await supabase.from("listeners").insert(profile);
+    setCurrentUser({ ...profile, email: data.email });
     setView("listener");
     notify("Account created! Welcome to VNC Radio 🎙️");
+    return { ok: true };
   };
 
-  const onRegisterArtist = (data) => {
-    setUsers(prev => ({ ...prev, artists:[...prev.artists, data] }));
-    setCurrentUser(data);
+  const onRegisterArtist = async (data) => {
+    const { data: authData, error } = await supabase.auth.signUp({ email: data.email, password: data.pass });
+    if (error) return { ok: false, msg: error.message };
+    const profile = { id: authData.user.id, artist_name: data.artistName, name: data.name || data.artistName, genre: data.genre, label: data.label || "Independent" };
+    await supabase.from("artists").insert(profile);
+    setCurrentUser({ ...profile, email: data.email });
     setView("artist-dash");
-    notify("Demo artist profile created");
+    notify("Application submitted! Welcome to VNC Radio 🎤");
+    return { ok: true };
   };
 
-  const onSubscribe = () => {
-    const updated = { ...currentUser, subscribed:true };
-    setCurrentUser(updated);
-    setUsers(prev => ({ ...prev, listeners:prev.listeners.map(u => u.email===updated.email?updated:u) }));
+  const onSubscribe = async () => {
+    await supabase.from("listeners").update({ subscribed: true }).eq("id", currentUser.id);
+    setCurrentUser(prev => ({ ...prev, subscribed: true }));
   };
+
+  const onLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentUser(null);
+    setView("auth");
+  };
+
+  useEffect(() => { window.scrollTo(0,0); }, [view]);
+
+  if (view === "loading") return (
+    <div style={{ minHeight:"100vh", background:T.black, display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <div style={{ textAlign:"center" }}>
+        <img src={LOGO} alt="VNC Radio" style={{ width:120, height:120, objectFit:"contain", filter:`drop-shadow(0 0 24px ${T.acid}50)` }} className="pulse"/>
+        <div className="barlow" style={{ color:T.acid, fontSize:18, letterSpacing:4, marginTop:16 }}>LOADING...</div>
+      </div>
+    </div>
+  );
 
   return (
     <>
-      <style>{css}</style><div className="demo-strip">DESIGN PREVIEW <span>Sample data · Accounts last for this session · Streaming and payments are not connected</span></div>
+      <style>{css}</style>
       {notif && <Notification msg={notif} onDone={() => setNotif(null)}/>}
       {view==="auth" && (
         <AuthScreen
@@ -1145,9 +1220,9 @@ export default function App() {
           onRegisterArtist={onRegisterArtist}
         />
       )}
-      {view==="admin" && <AdminDashboard onLogout={() => setView("auth")} notify={notify} users={users}/>}
-      {view==="listener" && <ListenerFrontend onBack={() => { setCurrentUser(null); setView("auth"); }} notify={notify} currentUser={currentUser} onSubscribe={onSubscribe}/>}
-      {view==="artist-dash" && <ArtistDashboard user={currentUser} onLogout={() => { setCurrentUser(null); setView("auth"); }} notify={notify}/>}
+      {view==="admin" && <AdminDashboard onLogout={onLogout} notify={notify} users={users}/>}
+      {view==="listener" && <ListenerFrontend onBack={onLogout} notify={notify} currentUser={currentUser} onSubscribe={onSubscribe}/>}
+      {view==="artist-dash" && <ArtistDashboard user={currentUser} onLogout={onLogout} notify={notify}/>}
     </>
   );
 }
